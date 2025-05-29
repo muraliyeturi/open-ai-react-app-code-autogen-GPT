@@ -1,0 +1,52 @@
+{
+  "header": {
+    "title": "تقديم متعدد الخطوات",
+    "language": "اللغة"
+  },
+  "step1": {
+    "title": "المعلومات الشخصية",
+    "name": "الاسم",
+    "nationalId": "الرقم الوطني",
+    "dob": "تاريخ الميلاد",
+    "gender": "الجنس",
+    "address": "العنوان",
+    "city": "المدينة",
+    "state": "الولاية",
+    "country": "الدولة",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني"
+  },
+  "step2": {
+    "title": "معلومات العائلة والمالية",
+    "maritalStatus": "الحالة الاجتماعية",
+    "dependents": "المعالون",
+    "employmentStatus": "حالة العمل",
+    "monthlyIncome": "الدخل الشهري",
+    "housingStatus": "حالة السكن",
+    "familySize": "Family Size",
+    "income": "Income",
+    "expenses": "Expenses"
+  },
+  "step3": {
+    "title": "وصف الحالة",
+    "currentFinancial": "الوضع المالي الحالي",
+    "employmentCircumstances": "ظروف العمل",
+    "reason": "سبب التقديم"
+  },
+  "actions": {
+    "next": "التالي",
+    "back": "السابق",
+    "submit": "إرسال"
+  },
+  "progress": {
+    "step": "الخطوة {{current}} من {{total}}"
+  },
+  "success": "تم إرسال الطلب بنجاح!",
+  "helpMeWrite": "ساعدني في الكتابة",
+  "aiSuggestion": "اقتراح الذكاء الاصطناعي",
+  "suggestion": "الاقتراح",
+  "discard": "تجاهل",
+  "accept": "اعتماد",
+  "error": "فشل في جلب الاقتراح",
+  "timeout": "انتهت مهلة الطلب"
+}

@@ -1,0 +1,52 @@
+{
+  "header": {
+    "title": "Multi-Step Application",
+    "language": "Language"
+  },
+  "step1": {
+    "title": "Personal Information",
+    "name": "Name",
+    "nationalId": "National ID",
+    "dob": "Date of Birth",
+    "gender": "Gender",
+    "address": "Address",
+    "city": "City",
+    "state": "State",
+    "country": "Country",
+    "phone": "Phone",
+    "email": "Email"
+  },
+  "step2": {
+    "title": "Family & Financial Info",
+    "maritalStatus": "Marital Status",
+    "dependents": "Dependents",
+    "employmentStatus": "Employment Status",
+    "monthlyIncome": "Monthly Income",
+    "housingStatus": "Housing Status",
+    "familySize": "Family Size",
+    "income": "Income",
+    "expenses": "Expenses"
+  },
+  "step3": {
+    "title": "Situation Descriptions",
+    "currentFinancial": "Current Financial Situation",
+    "employmentCircumstances": "Employment Circumstances",
+    "reason": "Reason for Applying",
+    "helpMeWrite": "Help Me Write",
+    "aiSuggestion": "Suggestion",
+    "suggestion": "Suggestion",
+    "discard": "Discard",
+    "accept": "Accept",
+    "error": "Failed to fetch suggestion",
+    "timeout": "Request timed out"
+  },
+  "actions": {
+    "next": "Next",
+    "back": "Back",
+    "submit": "Submit"
+  },
+  "progress": {
+    "step": "Step {{current}} of {{total}}"
+  },
+  "success": "Application submitted successfully!"
+}
