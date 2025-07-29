@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Step1PersonalInfo from '../Step1PersonalInfo';
 import { FormProvider } from '../../context/FormContext';

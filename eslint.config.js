@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'coverage'] },
 
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
@@ -26,14 +26,16 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
-      "overrides": [
-        {
-          "files": ["tests/**/*"],
-          "env": {
-            "jest": true
-          }
-        }
-      ]
+    },
+  },
+  
+  // Jest test files configuration
+  {
+    files: ['**/*.test.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
     },
   },
 )

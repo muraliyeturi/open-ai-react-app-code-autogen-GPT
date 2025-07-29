@@ -19,7 +19,7 @@ const Header: React.FC = () => {
     } else {
       document.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
     }
-  }, [i18n.language]);
+  }, [i18n.language, i18n]);
 
   return (
     <AppBar position="static" color="primary">

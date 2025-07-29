@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Alert, Tabs, Tab, Box, Grid, Select, MenuItem, InputLabel } from '@mui/material';
+import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Alert, Box, Grid, Select, MenuItem } from '@mui/material';
 import { useFormContext } from '../context/FormContext';
 import type { FormData } from '../context/FormContext';
 import { useTranslation } from 'react-i18next';
@@ -52,12 +52,10 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
     defaultValues: data as any,
     mode: 'onBlur',
   });
-  const [selectedTab, setSelectedTab] = useState<keyof typeof helpPrompts>('currentFinancial');
-  const [suggestion, setSuggestion] = useState('');
+  const [selectedTab] = useState<keyof typeof helpPrompts>('currentFinancial');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [suggestions, setSuggestions] = useState<Partial<Record<keyof typeof helpPrompts, string>>>({});
   const [apiOptions, setApiOptions] = useState<any[]>([]);
   const [selectedValues, setSelectedValues] = useState<{ [K in keyof typeof helpPrompts]: string[] }>({
     currentFinancial: [],
@@ -90,7 +88,6 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
         parsed = [];
       }
       setApiOptions(parsed);
-      setSuggestions(prev => ({ ...prev, [field]: suggestion }));
     } catch (e: any) {
       setError(e.message || 'Failed to fetch suggestion');
       setApiOptions([]);
@@ -104,9 +101,7 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
    */
   const onHelpClick = () => {
     setDialogOpen(true);
-    setSuggestion('');
     setError(null);
-    setSuggestions({});
     fetchAndSetSuggestion(selectedTab);
   };
 
@@ -121,8 +116,6 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
       if (selectedValues[field]?.length) setValue(field, selectedValues[field].join(', '));
     });
     setDialogOpen(false);
-    setSuggestion('');
-    setSuggestions({});
     setApiOptions([]);
     setSelectedValues({ currentFinancial: [], employmentCircumstances: [], reason: [] });
   };
@@ -132,8 +125,6 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
    */
   const handleDiscard = () => {
     setDialogOpen(false);
-    setSuggestion('');
-    setSuggestions({});
     setApiOptions([]);
     setSelectedValues({ currentFinancial: [], employmentCircumstances: [], reason: [] });
   };
