@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Alert, Tabs, Tab, Box, Grid, Select, MenuItem, InputLabel } from '@mui/material';
+import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Alert, Box, Grid, Select, MenuItem } from '@mui/material';
 import { useFormContext } from '../context/FormContext';
 import type { FormData } from '../context/FormContext';
 import { useTranslation } from 'react-i18next';
+import config from '../config';
 
 const helpPrompts: Record<keyof Pick<FormData, 'currentFinancial' | 'employmentCircumstances' | 'reason'>, string> = {
   currentFinancial: 'Describe your current financial situation.',
@@ -20,15 +21,16 @@ async function fetchOpenAISuggestion(field: keyof typeof helpPrompts): Promise<s
   // Call backend API
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
+  
   try {
-    const res = await fetch('http://localhost:4000/api/ai-suggestion', {
+    const res = await fetch(`${config.API_BASE_URL}/api/ai-suggestion`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ field }),
       signal: controller.signal,
     });
     clearTimeout(timeout);
-    if (!res.ok) throw new Error('AI backend error');
+    if (!res.ok) throw new Error(`AI backend error: ${res.status}`);
     const data = await res.json();
     return data.suggestion || '';
   } catch (e: any) {
@@ -52,12 +54,10 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
     defaultValues: data as any,
     mode: 'onBlur',
   });
-  const [selectedTab, setSelectedTab] = useState<keyof typeof helpPrompts>('currentFinancial');
-  const [suggestion, setSuggestion] = useState('');
+  const [selectedTab] = useState<keyof typeof helpPrompts>('currentFinancial');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [suggestions, setSuggestions] = useState<Partial<Record<keyof typeof helpPrompts, string>>>({});
   const [apiOptions, setApiOptions] = useState<any[]>([]);
   const [selectedValues, setSelectedValues] = useState<{ [K in keyof typeof helpPrompts]: string[] }>({
     currentFinancial: [],
@@ -76,21 +76,23 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
     try {
       const suggestion = await fetchOpenAISuggestion(field);
       
-      // Try to parse as JSON array, fallback to string
+      // Try to parse as JSON array, fallback to empty array
       let parsed: any[] = [];
       try {
-        const respObj = JSON.stringify(suggestion);
-        const json = JSON.parse(JSON.parse(respObj));
+        // Handle case where suggestion is already a string containing JSON
+        const json = typeof suggestion === 'string' ? JSON.parse(suggestion) : suggestion;
         
-        if (Array.isArray(json.response)) {
+        if (json && Array.isArray(json.response)) {
           parsed = json.response;
+        } else if (Array.isArray(json)) {
+          parsed = json;
         }
-      } catch {
-        // fallback: treat as single string
-        parsed = [];
+      } catch (parseError) {
+        console.warn('Failed to parse AI suggestion as JSON:', parseError);
+        // fallback: treat as single string option
+        parsed = suggestion ? [{ [field]: suggestion }] : [];
       }
       setApiOptions(parsed);
-      setSuggestions(prev => ({ ...prev, [field]: suggestion }));
     } catch (e: any) {
       setError(e.message || 'Failed to fetch suggestion');
       setApiOptions([]);
@@ -104,9 +106,7 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
    */
   const onHelpClick = () => {
     setDialogOpen(true);
-    setSuggestion('');
     setError(null);
-    setSuggestions({});
     fetchAndSetSuggestion(selectedTab);
   };
 
@@ -121,8 +121,6 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
       if (selectedValues[field]?.length) setValue(field, selectedValues[field].join(', '));
     });
     setDialogOpen(false);
-    setSuggestion('');
-    setSuggestions({});
     setApiOptions([]);
     setSelectedValues({ currentFinancial: [], employmentCircumstances: [], reason: [] });
   };
@@ -132,8 +130,6 @@ export default function Step3SituationDesc({ onBack, onSubmitFinal, formStyleOve
    */
   const handleDiscard = () => {
     setDialogOpen(false);
-    setSuggestion('');
-    setSuggestions({});
     setApiOptions([]);
     setSelectedValues({ currentFinancial: [], employmentCircumstances: [], reason: [] });
   };

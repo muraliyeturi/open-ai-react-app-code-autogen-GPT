@@ -21,7 +21,15 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ current, total }) => {
       <Typography variant="body2" sx={{ mb: 0.5 }}>
         {t('progress.step', { current, total })}
       </Typography>
-      <LinearProgress variant="determinate" value={percent} />
+      <LinearProgress 
+        variant="determinate" 
+        value={percent} 
+        aria-label={t('progress.step', { current, total })}
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent}
+      />
     </Box>
   );
 };

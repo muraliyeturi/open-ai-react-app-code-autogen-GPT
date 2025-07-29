@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Step3SituationDesc from '../Step3SituationDesc';
 import { FormProvider } from '../../context/FormContext';

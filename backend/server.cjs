@@ -12,7 +12,9 @@ require("dotenv").config();
 const app = express();
 app.use(
   cors({
-    origin: "*", // Allow all origins
+    origin: process.env.NODE_ENV === 'production' 
+      ? ["https://yourdomain.com"] // Replace with actual production domain
+      : ["http://localhost:5173", "http://localhost:3000"], // Development origins
     methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
@@ -29,6 +31,12 @@ app.use(express.json());
 app.post("/api/ai-suggestion", async (req, res) => {
   const { field } = req.body;
 
+  // Input validation
+  const validFields = ['currentFinancial', 'employmentCircumstances', 'reason'];
+  if (!field || !validFields.includes(field)) {
+    return res.status(400).json({ error: "Invalid field parameter" });
+  }
+
   /**
    * helpPrompts: Prompt for OpenAI to generate suggestions for all fields in both English and Arabic.
    * The OpenAI response is expected to be a JSON object with translations for each field.
@@ -36,7 +44,6 @@ app.post("/api/ai-suggestion", async (req, res) => {
   const helpPrompts =
     'as a public user prepare a list of suggestions as options for describing user "current financial situation", "employment Circumstances", "reason" for filling social support request form. format the options to json response using template({response:[{currentFinancial: "", employmentCircumstances: "", reason: ""}]}) limit options to 10';
   const prompt = helpPrompts;
-  if (!prompt) return res.status(400).json({ error: "Invalid field" });
 
   try {
     /**
@@ -65,12 +72,14 @@ app.post("/api/ai-suggestion", async (req, res) => {
     });
     if (!openaiRes.ok) {
       const err = await openaiRes.text();
-      return res.status(500).json({ error: "OpenAI API error", details: err });
+      console.error('OpenAI API error:', err);
+      return res.status(500).json({ error: "OpenAI API error", details: process.env.NODE_ENV === 'production' ? 'External service unavailable' : err });
     }
     const data = await openaiRes.json();
     res.json({ suggestion: data.choices?.[0]?.message?.content || "" });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('Server error:', e.message);
+    res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Internal server error' : e.message });
   }
 });
 
